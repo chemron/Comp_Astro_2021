@@ -1,6 +1,18 @@
-module physics
+program assingment_1
+    use physics
+
     implicit none
-    public :: setup
+    integer, parameter :: n_max = 100
+    integer :: n = 100
+    real :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max)
+    ! position (x), velocity (v), mass (m), smoothing length (h), density (rho), internal
+    ! energy (u), pressure (P), and sound speed (c)
+    print*, 'Hello World'
+
+
+    call setup(x, v, m, h, rho, u, P, c, n_max, n)
+
+    call output(x, v, m, h, rho, u, P, c, n_max, n)
 
 contains
     subroutine setup(x, v, m, h, rho, u, P, c, n_max, n)
@@ -9,7 +21,6 @@ contains
         integer, intent(out) :: n
         integer, parameter :: rho_0 = 1.0
         real, parameter :: x_min = 0.0, x_max = 1.0
-        real , parameter :: pi = 4.* atan (1.0)
         real :: dx
         integer :: i
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
@@ -38,9 +49,14 @@ contains
             m(i) = rho_0
         enddo
 
+        ! setup smoothing length
         do i = 1, n
             h(i) = 1.2 * dx
         enddo
+
+        call get_density(x, m, h, rho, n_max, n)
+
+        ! setup density
 
     end subroutine setup
 
@@ -60,24 +76,5 @@ contains
         enddo
 
     end subroutine output
-
-end module physics
-
-
-program assingment_1
-    use physics
-
-    implicit none
-    integer, parameter :: n_max = 100
-    integer :: n = 100
-    real :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max)
-    ! position (x), velocity (v), mass (m), smoothing length (h), density (rho), internal
-    ! energy (u), pressure (P), and sound speed (c)
-    print*, 'Hello World'
-
-
-    call setup(x, v, m, h, rho, u, P, c, n_max, n)
-
-    call output(x, v, m, h, rho, u, P, c, n_max, n)
 
 end program assingment_1
