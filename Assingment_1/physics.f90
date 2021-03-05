@@ -1,6 +1,5 @@
 module physics
     implicit none
-    real , parameter :: pi = 4.* atan (1.0)
 
 contains
     real function W(x_a, x_b, h)
@@ -13,7 +12,7 @@ contains
         if ((0.0 <= q) .and. (q < 1)) then
             w = (1.0/4.0)*(2.0-q)**3 - (1 - q)**3
         elseif ((1.0 <= q) .and. (q < 2.0)) then
-            w = (1.0/4.0)
+            w = (1.0/4.0)*(2.0-q)**3
         else
             w = 0
         endif
@@ -24,16 +23,16 @@ contains
         
     end function W
 
-    subroutine get_density(x, m, h, rho, n_max, n)
-        integer, intent(in) :: n_max, n
+    subroutine get_density(x, m, h, rho, n_max, n_ghosts, n)
+        integer, intent(in) :: n_max, n_ghosts, n
         integer :: a, b
         real, intent(in) :: x(n_max), m(n_max), h(n_max)
         real, intent(out) :: rho(n_max)
 
-        do a = 1, n
+        do a = 1, n + n_ghosts
             rho(a) = 0
             ! summation:
-            do b = 1, n
+            do b = 1, n + n_ghosts
                 rho(a) = rho(a) + m(b) * W(x(a), x(b), h(a))
             enddo
 
