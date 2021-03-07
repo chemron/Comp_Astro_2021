@@ -3,16 +3,17 @@ module init
     real , parameter :: pi = 4.* atan (1.0)
 
     contains
-    subroutine setup(x, v, m, h, rho, u, P, c, n_max, n)
+    subroutine setup(x, v, m, h, c_0, n_max, n)
 
         integer, intent(in) :: n_max
         integer, intent(out) :: n
         real, parameter :: rho_0 = 1.0
         real, parameter :: x_min = 0.0, x_max = 1.0
         real :: dx
+        real, intent(in) :: c_0
         integer :: i
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
-        real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max)
+        real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max)
         n = 100
 
         ! setup position
@@ -21,15 +22,9 @@ module init
             x(i) = x_min + dx*(i - 1)
         enddo
 
-        ! setup sound speed
-        ! TODO: make this proper
-        do i = 1, n
-            c(i) = 1
-        enddo
-
         ! setup velocity
         do i = 1, n
-            v(i) = 10.0 ** (-4) * c(i) * sin(2 * pi * (x(i)-x_min) / (x_max-x_min))
+            v(i) = 10.0 ** (-4) * c_0 * sin(2 * pi * (x(i)-x_min) / (x_max-x_min))
         enddo
 
         ! setup mass
@@ -42,16 +37,15 @@ module init
             h(i) = 1.2 * dx
         enddo
 
-        ! setup density
 
     end subroutine setup
 
-    subroutine set_ghosts(x, v, m, h, rho, u, P, c, n_max, n_ghosts, n)
+    subroutine set_ghosts(x, v, m, h, n_max, n_ghosts, n)
 
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: i
         real, parameter :: rho_0 = 1.0
-        real, intent(inout) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max)
+        real, intent(inout) :: x(n_max), v(n_max), m(n_max), h(n_max)
         real :: width
 
         ! get width
@@ -60,7 +54,6 @@ module init
         ! setup position
         do i=1, n_ghosts/2
             x(n + i) = x(i + 1) + width 
-            c(n + i) = c(i + 1)
             v(n + i) = v(i + 1)
             m(n + i) = m(i + 1)
             h(n + i) = h(i + 1)
@@ -68,7 +61,6 @@ module init
 
         do i= 1, n_ghosts/2
             x(i + n + n_ghosts/2) = x(n - i) - width
-            c(i + n + n_ghosts/2) = c(n - i)
             v(i + n + n_ghosts/2) = v(n - i)
             m(i + n + n_ghosts/2) = m(n - i)
             h(i + n + n_ghosts/2) = h(n - i)

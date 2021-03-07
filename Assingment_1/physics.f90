@@ -24,8 +24,17 @@ contains
     end function W
 
     
-    subroutine equation_of_state() !rho, u, P, c, n_max, n, n_ghosts)
-        ! What equation of state do we use?
+    subroutine equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
+        integer, intent(in) :: n_max, n_ghosts, n
+        integer :: i
+        real, intent(out) :: P(n_max), c(n_max)
+        real, intent(in) :: rho(n_max), c_0
+
+        ! use eos from lecture 1
+        do i = 1, n + n_ghosts
+            c(i) = c_0
+            P(i) = c(i)**2 * rho(i)
+        enddo
 
     end subroutine equation_of_state
 
