@@ -1,0 +1,125 @@
+module derivs
+    implicit none
+
+contains
+    real function W(x_a, x_b, h)
+        real, intent(in) :: x_a, x_b, h
+        real :: q
+        integer, parameter :: d=1
+
+        ! calculate q
+        q = abs(x_a - x_b)/h
+
+        if ((0.0 <= q) .and. (q < 1)) then
+            w = (1.0/4.0)*(2.0-q)**3 - (1 - q)**3
+        elseif ((1.0 <= q) .and. (q < 2.0)) then
+            w = (1.0/4.0)*(2.0-q)**3
+        else
+            w = 0
+        endif
+
+        W = (1.0/h**d) * (2.0/3.0) * w
+
+    end function W
+
+
+
+
+    real function grad_W(x_a, x_b, h)
+        real, intent(in) :: x_a, x_b, h
+        real :: q, grad_q, dw
+        integer, parameter :: d=1
+
+        ! grad_W = dw/dq * grad_q
+
+        ! calculate q
+        q = abs(x_a - x_b)/h
+
+        ! calculate grad_q
+        grad_q = (1.0/h) * (x_a - x_b)/ abs(x_a - x_b)
+
+        ! calculate dw/dq
+
+        if ((0.0 <= q) .and. (q < 1)) then
+            dw = -(3.0/4.0)*(2.0-q)**2 + 3.0 * (1 - q)**2
+        elseif ((1.0 <= q) .and. (q < 2.0)) then
+            dw = -(3.0/4.0)*(2.0-q)**2
+        else
+            dw = 0
+        endif
+
+        dW = (1.0/h**d) * (2.0/3.0) * dw
+
+        grad_W = dW * grad_q
+    
+    end function grad_W
+
+
+    subroutine get_density(x, m, h, rho, n_max, n_ghosts, n)
+        integer, intent(in) :: n_max, n_ghosts, n
+        integer :: a, b
+        real, intent(in) :: x(n_max), m(n_max), h(n_max)
+        real, intent(out) :: rho(n_max)
+
+        do a = 1, n + n_ghosts
+            rho(a) = 0
+            ! summation:
+            do b = 1, n + n_ghosts
+                rho(a) = rho(a) + m(b) * W(x(a), x(b), h(a))
+            enddo
+
+        enddo
+
+    end subroutine get_density
+
+    
+    subroutine equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
+        integer, intent(in) :: n_max, n_ghosts, n
+        integer :: i
+        real, intent(in) :: rho(n_max), c_0
+        real, intent(out) :: P(n_max), c(n_max)
+
+        ! use eos from lecture 1
+        do i = 1, n + n_ghosts
+            c(i) = c_0
+            P(i) = c(i)**2 * rho(i)
+        enddo
+
+    end subroutine equation_of_state
+
+
+    subroutine get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
+        integer, intent(in) :: n_max, n_ghosts, n
+        integer :: i, j
+        real, intent(in) :: x(n_max), m(n_max), h(n_max), rho(n_max), P(n_max)
+        real, intent(out) :: a(n_max)
+
+        do i = 1, n + n_ghosts
+            a(i) = 0.0
+
+            do j = 1, n + n_ghosts
+                ! grad_W should be zero if i == j
+                if (i /= j) then
+                    a(i) = a(i) - m(j) * ((P(i))/rho(i)**2 * grad_W(x(i), x(j), h(i)) + (P(j))/rho(j)**2 * grad_W(x(i), x(j), h(j)))
+                endif
+            enddo
+        enddo
+
+    end subroutine get_accel
+
+
+    subroutine get_derivs(x, a, m, h, rho, P, c, c_0, n_max, n_ghosts, n)
+        real, intent(in) :: c_0
+        integer, intent(in) :: n, n_max, n_ghosts
+        real, intent(in) :: x(n_max), m(n_max), h(n_max)
+        real, intent(out) :: a(n_max), rho(n_max), P(n_max), c(n_max)
+
+        call get_density(x, m, h, rho, n_max, n_ghosts, n)
+
+        call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
+    
+        call get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
+
+    end subroutine get_derivs
+
+end module derivs

@@ -51,14 +51,15 @@ module init
         ! get width
         width = abs(x(n) - x(1))
 
-        ! setup position
+        ! right ghosts
         do i=1, n_ghosts/2
             x(n + i) = x(i + 1) + width 
             v(n + i) = v(i + 1)
             m(n + i) = m(i + 1)
             h(n + i) = h(i + 1)
         enddo
-
+        
+        ! left ghosts
         do i= 1, n_ghosts/2
             x(i + n + n_ghosts/2) = x(n - i) - width
             v(i + n + n_ghosts/2) = v(n - i)
@@ -69,18 +70,18 @@ module init
     end subroutine set_ghosts
 
 
-    subroutine output(x, v, m, h, rho, u, P, c, n_max, n, n_ghosts)
+    subroutine output(x, v, a, m, h, rho, u, P, c, n_max, n, n_ghosts)
         integer, intent(in) :: n_max, n, n_ghosts
-        real, intent(in) ::  x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), &
+        real, intent(in) ::  x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
         u(n_max), P(n_max), c(n_max)
         integer :: lu = 1, i
         real :: t = 0
 
         open(lu , file='output.out', status='replace', action='write')
-        write(lu,*) '# x, v, m, h, rho, u, P, c'
+        write(lu,*) '# x, v, a, m, h, rho, u, P, c'
         write(lu,*) t
         do i=1,n + n_ghosts
-            write(lu,*) x(i), v(i), m(i), h(i), rho(i), u(i), P(i), c(i)
+            write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i)
         enddo
 
     end subroutine output
