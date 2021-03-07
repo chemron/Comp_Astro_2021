@@ -96,6 +96,7 @@ contains
                 if (i /= j) then
                     call kernal(x(i), x(j), h(i), W, grad_W_i)
                     call kernal(x(i), x(j), h(j), W, grad_W_j)
+                    print*, grad_W_i, grad_W_j
                     a(i) = a(i) - m(j) * ((P(i))/rho(i)**2 * grad_W_i + (P(j))/rho(j)**2 * grad_W_j)
                 endif
             enddo
