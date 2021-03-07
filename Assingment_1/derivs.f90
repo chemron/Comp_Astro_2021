@@ -2,13 +2,20 @@ module derivs
     implicit none
 
 contains
-    real function W(x_a, x_b, h)
+
+    subroutine kernal(x_a, x_b, h, W, grad_W)
         real, intent(in) :: x_a, x_b, h
-        real :: q
+        real, intent(out) :: W, grad_W
+        real :: q, grad_q, dw
         integer, parameter :: d=1
 
         ! calculate q
         q = abs(x_a - x_b)/h
+
+        ! calculate grad_q
+        grad_q = (1.0/h) * (x_a - x_b)/ abs(x_a - x_b)
+
+        ! calculate W
 
         if ((0.0 <= q) .and. (q < 1)) then
             w = (1.0/4.0)*(2.0-q)**3 - (1 - q)**3
@@ -20,24 +27,6 @@ contains
 
         W = (1.0/h**d) * (2.0/3.0) * w
 
-    end function W
-
-
-
-
-    real function grad_W(x_a, x_b, h)
-        real, intent(in) :: x_a, x_b, h
-        real :: q, grad_q, dw
-        integer, parameter :: d=1
-
-        ! grad_W = dw/dq * grad_q
-
-        ! calculate q
-        q = abs(x_a - x_b)/h
-
-        ! calculate grad_q
-        grad_q = (1.0/h) * (x_a - x_b)/ abs(x_a - x_b)
-
         ! calculate dw/dq
 
         if ((0.0 <= q) .and. (q < 1)) then
@@ -48,16 +37,19 @@ contains
             dw = 0
         endif
 
+        ! grad_W = dw/dq * grad_q
+
         dW = (1.0/h**d) * (2.0/3.0) * dw
 
         grad_W = dW * grad_q
     
-    end function grad_W
+    end subroutine kernal
 
 
     subroutine get_density(x, m, h, rho, n_max, n_ghosts, n)
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: a, b
+        real :: W, grad_W
         real, intent(in) :: x(n_max), m(n_max), h(n_max)
         real, intent(out) :: rho(n_max)
 
@@ -65,7 +57,8 @@ contains
             rho(a) = 0
             ! summation:
             do b = 1, n + n_ghosts
-                rho(a) = rho(a) + m(b) * W(x(a), x(b), h(a))
+                call kernal(x(a), x(b), h(a), W, grad_W)
+                rho(a) = rho(a) + m(b) * W
             enddo
 
         enddo
@@ -91,6 +84,7 @@ contains
     subroutine get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: i, j
+        real :: W, grad_W_i, grad_W_j
         real, intent(in) :: x(n_max), m(n_max), h(n_max), rho(n_max), P(n_max)
         real, intent(out) :: a(n_max)
 
@@ -100,7 +94,9 @@ contains
             do j = 1, n + n_ghosts
                 ! grad_W should be zero if i == j
                 if (i /= j) then
-                    a(i) = a(i) - m(j) * ((P(i))/rho(i)**2 * grad_W(x(i), x(j), h(i)) + (P(j))/rho(j)**2 * grad_W(x(i), x(j), h(j)))
+                    call kernal(x(i), x(j), h(i), W, grad_W_i)
+                    call kernal(x(i), x(j), h(j), W, grad_W_j)
+                    a(i) = a(i) - m(j) * ((P(i))/rho(i)**2 * grad_W_i + (P(j))/rho(j)**2 * grad_W_j)
                 endif
             enddo
         enddo
