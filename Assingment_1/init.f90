@@ -49,27 +49,29 @@ module init
     subroutine set_ghosts(x, v, m, h, rho, u, P, c, n_max, n_ghosts, n)
 
         integer, intent(in) :: n_max, n_ghosts, n
-        real :: dx
         integer :: i
         real, parameter :: rho_0 = 1.0
         real, intent(inout) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max)
+        real :: width
+
+        ! get width
+        width = abs(x(n) - x(1))
 
         ! setup position
-        dx = (x(100) - x(1))/(n - 1)
-        do i=101, 101 + n_ghosts/2 - 1
-            x(i) = x(i-1) + dx
-            c(i) = 1
-            v(i) = 0
-            m(i) = rho_0*dx
-            h(i) = 1.2 * dx
+        do i=1, n_ghosts/2
+            x(n + i) = x(i + 1) + width 
+            c(n + i) = c(i + 1)
+            v(n + i) = v(i + 1)
+            m(n + i) = m(i + 1)
+            h(n + i) = h(i + 1)
         enddo
 
         do i= 1, n_ghosts/2
-            x(i + 101 + n_ghosts/2 - 1) = -dx*i
-            c(i + 101 + n_ghosts/2 - 1) = 1
-            v(i + 101 + n_ghosts/2 - 1) = 0
-            m(i + 101 + n_ghosts/2 - 1) = rho_0*dx
-            h(i + 101 + n_ghosts/2 - 1) = 1.2 * dx
+            x(i + n + n_ghosts/2) = x(n - i) - width
+            c(i + n + n_ghosts/2) = c(n - i)
+            v(i + n + n_ghosts/2) = v(n - i)
+            m(i + n + n_ghosts/2) = m(n - i)
+            h(i + n + n_ghosts/2) = h(n - i)
         enddo
 
     end subroutine set_ghosts

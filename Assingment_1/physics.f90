@@ -23,6 +23,13 @@ contains
         
     end function W
 
+    
+    subroutine equation_of_state() !rho, u, P, c, n_max, n, n_ghosts)
+        ! What equation of state do we use?
+
+    end subroutine equation_of_state
+
+
     subroutine get_density(x, m, h, rho, n_max, n_ghosts, n)
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: a, b
