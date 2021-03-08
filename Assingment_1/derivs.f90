@@ -1,4 +1,5 @@
 module derivs
+    use init
     implicit none
 
 contains
@@ -53,7 +54,7 @@ contains
         real, intent(in) :: x(n_max), m(n_max), h(n_max)
         real, intent(out) :: rho(n_max)
 
-        do a = 1, n + n_ghosts
+        do a = 1, n
             rho(a) = 0
             ! summation:
             do b = 1, n + n_ghosts
@@ -88,7 +89,7 @@ contains
         real, intent(in) :: x(n_max), m(n_max), h(n_max), rho(n_max), P(n_max)
         real, intent(out) :: a(n_max)
 
-        do i = 1, n + n_ghosts
+        do i = 1, n
             a(i) = 0.0
 
             do j = 1, n + n_ghosts
@@ -96,7 +97,6 @@ contains
                 if (i /= j) then
                     call kernal(x(i), x(j), h(i), W, grad_W_i)
                     call kernal(x(i), x(j), h(j), W, grad_W_j)
-                    print*, grad_W_i, grad_W_j
                     a(i) = a(i) - m(j) * ((P(i))/rho(i)**2 * grad_W_i + (P(j))/rho(j)**2 * grad_W_j)
                 endif
             enddo
@@ -105,17 +105,25 @@ contains
     end subroutine get_accel
 
 
-    subroutine get_derivs(x, a, m, h, rho, P, c, c_0, n_max, n_ghosts, n)
-        real, intent(in) :: c_0
-        integer, intent(in) :: n, n_max, n_ghosts
-        real, intent(in) :: x(n_max), m(n_max), h(n_max)
-        real, intent(out) :: a(n_max), rho(n_max), P(n_max), c(n_max)
+    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, c_0, x_min, x_max, n_max, n, n_ghosts)
+        integer, intent(in) :: n_max, n_ghosts, n
+        real, intent(in) :: c_0, x_min, x_max
+        real, parameter :: rho_0 = 1.0
+        real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
+        u(n_max), P(n_max), c(n_max)
 
         call get_density(x, m, h, rho, n_max, n_ghosts, n)
+
+        ! update ghosts
+        call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
 
         call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
     
         call get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
+
+        ! update ghosts
+        call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
+
 
     end subroutine get_derivs
 
