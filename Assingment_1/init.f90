@@ -17,10 +17,10 @@ module init
         n = 100
 
         ! setup position
-        ! put particles in the middle of cells with width dx 
+        ! put particles in the middle of cells with width dx
         dx = (x_max - x_min)/n
         do i=1, n
-            x(i) = x_min + dx*(i - 0.5) 
+            x(i) = x_min + dx*(i - 0.5)
         enddo
 
         ! setup velocity
@@ -56,7 +56,7 @@ module init
 
         ! right ghosts
         do i=1, n_ghosts/2
-            x(n + i) = x(i) + width 
+            x(n + i) = x(i) + width
             v(n + i) = v(i)
             a(n + i) = a(i)
             m(n + i) = m(i)
@@ -66,7 +66,7 @@ module init
             P(n + i) = P(i)
             c(n + i) = c(i)
         enddo
-        
+
         ! left ghosts
         do i= 1, n_ghosts/2
             x(i + n + n_ghosts/2) = x(n + 1 - i) - width
@@ -89,10 +89,9 @@ module init
         u(n_max), P(n_max), c(n_max)
         integer :: lu = 1, i
         character(len=128) :: filename
-    
+
         write(filename,"(a,i5.5)") 'output/snap_', ifile
-    
-        print "(a,f8.3)", ' writing '//trim(filename)// ' t =',t    
+        print "(a,f8.3)", ' writing '//trim(filename)// ' t =',t
 
         open(lu , file=filename, status='replace', action='write')
         write(lu,*) '# x, v, a, m, h, rho, u, P, c'

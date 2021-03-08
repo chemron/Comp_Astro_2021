@@ -43,7 +43,7 @@ contains
         dW = (1.0/h**d) * (2.0/3.0) * dw
 
         grad_W = dW * grad_q
-    
+
     end subroutine kernal
 
 
@@ -66,7 +66,7 @@ contains
 
     end subroutine get_density
 
-    
+
     subroutine equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: i
@@ -112,17 +112,18 @@ contains
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
         u(n_max), P(n_max), c(n_max)
 
+        call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
+
         call get_density(x, m, h, rho, n_max, n_ghosts, n)
 
-        ! update ghosts
-        call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
 
         call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
-    
-        call get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
 
-        ! update ghosts
+
+        ! TODO: remove pressure, soundspeed, acceleration
         call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
+
+        call get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
 
 
     end subroutine get_derivs

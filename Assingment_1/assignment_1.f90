@@ -17,8 +17,6 @@ program assingment_1
     ! initialise
     call setup(x, v, m, h, c_0, x_min, x_max, n_max, n)
 
-    call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
-
     call get_derivs(x, v, a, m, h, rho, u, P, c, c_0, x_min, x_max, n_max, n, n_ghosts)
 
     call output(0.0, x, v, a, m, h, rho, u, P, c, n_max, n, n_ghosts, 0)
