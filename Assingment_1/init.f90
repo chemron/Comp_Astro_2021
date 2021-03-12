@@ -92,12 +92,11 @@ module init
 
         write(filename,"(a,i5.5)") 'output/snap_', ifile
         print "(a,f8.3)", ' writing '//trim(filename)// ' t =',t
-
         open(lu , file=filename, status='replace', action='write')
         write(lu,*) '# x, v, a, m, h, rho, u, P, c, ke'
         write(lu,*) t
         do i=1,n + n_ghosts
-            write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i), ke(n_max)
+            write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i), ke(i)
         enddo
         close(lu)
 

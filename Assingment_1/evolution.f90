@@ -1,7 +1,7 @@
 module evolution
     use init
     use derivs
-    use energy
+    use physics
     implicit none
 
 
@@ -34,7 +34,8 @@ contains
         integer, intent(in) :: n, n_max, n_ghosts
         real, intent(in) :: x_min, x_max, c_0, t_start, t_end, dt, dtout
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), &
-        h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max), ke(n_max)
+        h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max)
+        real, intent(out) :: ke(n_max)
         real :: t, tprint
         integer :: ifile
 
@@ -43,8 +44,8 @@ contains
         tprint = ifile * dtout
         do while (t <= t_end)
             call leapfrog(x, v, a, m, h, rho, u, P, c, c_0, t, dt, x_min, x_max, n_max, n, n_ghosts)
+            call get_kinetic_energy(v, m, ke, n, n_max)
             if (t >= tprint) then
-                call get_kinetic_energy(v, m, ke, n, n_max)
                 call output(t, x, v, a, m, h, rho, u, P, c, ke, n_max, n, n_ghosts, ifile)
                 ifile = ifile + 1
                 tprint = ifile * dtout

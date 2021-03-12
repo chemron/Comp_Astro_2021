@@ -4,6 +4,7 @@ program assingment_1
     use init
 
     implicit none
+    
     integer, parameter :: n_max = 150, n_ghosts = 10
     real, parameter :: x_min = 0.0, x_max = 1.0
     real, parameter :: c_0 = 1

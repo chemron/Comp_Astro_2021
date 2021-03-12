@@ -1,5 +1,6 @@
 module derivs
     use init
+    use physics
     implicit none
 
 contains
@@ -106,6 +107,7 @@ contains
 
 
     subroutine get_derivs(x, v, a, m, h, rho, u, P, c, c_0, x_min, x_max, n_max, n, n_ghosts)
+        integer :: i
         integer, intent(in) :: n_max, n_ghosts, n
         real, intent(in) :: c_0, x_min, x_max
         real, parameter :: rho_0 = 1.0
@@ -114,14 +116,18 @@ contains
 
         call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
 
-        call get_density(x, m, h, rho, n_max, n_ghosts, n)
-
+        do i = 1, 3
+            call get_density(x, m, h, rho, n_max, n_ghosts, n)
+            call get_smoothing_length(m, rho, h, n, n_max)
+        enddo
+    
 
         call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
 
 
         ! TODO: remove pressure, soundspeed, acceleration
         call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
+        
 
         call get_accel(x, a, m, h, rho, P, n_max, n_ghosts, n)
 

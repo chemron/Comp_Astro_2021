@@ -19,12 +19,14 @@ contains
     subroutine  get_smoothing_length(m, rho, h, n, n_max)
         integer :: i
         integer, parameter :: n_dim = 1
+        real :: eta
         integer, intent(in) :: n, n_max
         real, intent(in) :: m(n_max), rho(n_max)
         real, intent(inout) :: h(n_max)
-
+        ! TODO: justify eta/h_fac
+        eta = 1.2
         do i = 1, n
-            h(i) = h(i) * (m(i) / rho(i))**(1/n_dim)
+            h(i) = eta * (m(i) / rho(i))**(1/n_dim)
         enddo
 
     end subroutine  get_smoothing_length
