@@ -83,10 +83,10 @@ module init
     end subroutine set_ghosts
 
 
-    subroutine output(t, x, v, a, m, h, rho, u, P, c, n_max, n, n_ghosts, ifile)
+    subroutine output(t, x, v, a, m, h, rho, u, P, c, ke, n_max, n, n_ghosts, ifile)
         integer, intent(in) :: n_max, n, n_ghosts, ifile
         real, intent(in) :: t, x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
-        u(n_max), P(n_max), c(n_max)
+        u(n_max), P(n_max), c(n_max), ke(n_max)
         integer :: lu = 1, i
         character(len=128) :: filename
 
@@ -94,10 +94,10 @@ module init
         print "(a,f8.3)", ' writing '//trim(filename)// ' t =',t
 
         open(lu , file=filename, status='replace', action='write')
-        write(lu,*) '# x, v, a, m, h, rho, u, P, c'
+        write(lu,*) '# x, v, a, m, h, rho, u, P, c, ke'
         write(lu,*) t
         do i=1,n + n_ghosts
-            write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i)
+            write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i), ke(n_max)
         enddo
         close(lu)
 
