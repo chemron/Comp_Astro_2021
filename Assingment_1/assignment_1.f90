@@ -22,6 +22,9 @@ program assingment_1
 
     call output(0.0, x, v, a, m, h, rho, u, P, c, ke, n_max, n, n_ghosts, 0)
 
+    ! initiallise ke file
+    call initialise_ke_output()
+
     ! evolve for 5 seconds
     t_start = 0.0
     t_end = 5.0
