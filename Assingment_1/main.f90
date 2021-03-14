@@ -1,4 +1,4 @@
-program assingment_1
+program main
     use derivs
     use outputs
     use evolution
@@ -35,4 +35,4 @@ program assingment_1
     call timestepping(x, v, a, m, h, rho, u, P, c, ke, c_0, t_start, t_end, &
                       dt, dtout, x_min, x_max, n_max, n_ghosts, n)
 
-end program assingment_1
+end program main

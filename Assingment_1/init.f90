@@ -44,8 +44,9 @@ module init
     subroutine isothermal_setup(x, v, m, h, c_0, n_max, n)
 
         integer, intent(in) :: n_max
+        integer :: n_left, n_right
         integer, intent(out) :: n
-        real, parameter :: rho_0 = 1.0
+        real, parameter :: rho_left = 1.0, rho_right = 0.1
         real :: x_min = -0.5, x_max = 0.5
         real :: dx_left = 0.001, dx_right = 0.01
         real, intent(in) :: c_0
@@ -53,12 +54,40 @@ module init
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
         real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max)
 
-        ! setup position
-        ! calculate number of particles left of origin
-        ! n_left = 
-        ! do i=1, n
-        !     x(i) = x_min + dx*(i - 0.5)
-        ! enddo
+        ! calculate number of particles left and right of origin
+        ! (round to nearest whole number)
+        n_left = nint(abs(0 - x_min)/dx_left)
+        n_right = nint(abs(x_max - 0)/dx_right)
+        n = n_left + n_right
+
+        ! set position left and right of origin
+        do i=1, n_left
+            x(i) = x_min + dx_left*(i - 0.5)
+        enddo
+
+        do i=1, n_right
+            x(i + n_left) = 0.0 + dx_right*(i - 0.5)
+        enddo
+
+        ! set mass left and right of origin
+        do i=1, n_left
+            m(i) = rho_left*dx_left
+        enddo
+
+        do i=1, n_right
+            m(i + n_left) = rho_right*dx_right
+        enddo
+
+        
+        ! set mass left and right of origin
+        do i=1, n_left
+            h(i) = 1.2 * dx_left
+        enddo
+
+        do i=1, n_right
+            h(i + n_left) = 1.2 * dx_right
+        enddo
+
 
         ! ! setup velocity
         ! do i = 1, n

@@ -1,7 +1,6 @@
 module evolution
     use init
     use derivs
-    use physics
     use outputs
     implicit none
 
@@ -29,6 +28,19 @@ contains
         t = t + dt
 
     end subroutine leapfrog
+
+
+    subroutine get_kinetic_energy(v, m, ke, n, n_max)
+        integer :: i
+        integer, intent(in) :: n, n_max
+        real, intent(in) :: v(n_max), m(n_max)
+        real, intent(out) :: ke(n_max)
+
+        do i = 1, n
+            ke(i) = 0.5 * m(i) * v(i)**2
+        enddo
+
+    end subroutine get_kinetic_energy
 
 
     subroutine timestepping(x, v, a, m, h, rho, u, P, c, ke, c_0, t_start, t_end, dt, dtout, x_min, x_max, n_max, n_ghosts, n)
