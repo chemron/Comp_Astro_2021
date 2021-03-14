@@ -1,5 +1,6 @@
 program assingment_1
     use derivs
+    use outputs
     use evolution
     use init
 

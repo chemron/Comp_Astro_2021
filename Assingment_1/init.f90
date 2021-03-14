@@ -41,40 +41,39 @@ module init
 
     end subroutine setup
 
-    subroutine isothermal_setup(x, v, m, h, c_0, x_min, x_max, n_max, n)
+    subroutine isothermal_setup(x, v, m, h, c_0, n_max, n)
 
         integer, intent(in) :: n_max
         integer, intent(out) :: n
         real, parameter :: rho_0 = 1.0
-        real, intent(in) :: x_min, x_max
-        real :: dx
+        real :: x_min = -0.5, x_max = 0.5
+        real :: dx_left = 0.001, dx_right = 0.01
         real, intent(in) :: c_0
         integer :: i
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
         real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max)
-        n = 100
 
         ! setup position
-        ! put particles in the middle of cells with width dx
-        dx = (x_max - x_min)/n
-        do i=1, n
-            x(i) = x_min + dx*(i - 0.5)
-        enddo
+        ! calculate number of particles left of origin
+        ! n_left = 
+        ! do i=1, n
+        !     x(i) = x_min + dx*(i - 0.5)
+        ! enddo
 
-        ! setup velocity
-        do i = 1, n
-            v(i) = 10.0 ** (-4) * c_0 * sin(2 * pi * (x(i)-x_min) / (x_max-x_min))
-        enddo
+        ! ! setup velocity
+        ! do i = 1, n
+        !     v(i) = 10.0 ** (-4) * c_0 * sin(2 * pi * (x(i)-x_min) / (x_max-x_min))
+        ! enddo
 
-        ! setup mass
-        do i = 1, n
-            m(i) = rho_0*dx
-        enddo
+        ! ! setup mass
+        ! do i = 1, n
+        !     m(i) = rho_0*dx
+        ! enddo
 
-        ! setup smoothing length
-        do i = 1, n
-            h(i) = 1.2 * dx
-        enddo
+        ! ! setup smoothing length
+        ! do i = 1, n
+        !     h(i) = 1.2 * dx
+        ! enddo
 
 
     end subroutine isothermal_setup
@@ -119,33 +118,5 @@ module init
         enddo
 
     end subroutine set_ghosts
-
-    subroutine initialise_ke_output()
-        integer :: lu = 1
-
-        open(lu , file='energy.out', status='replace', action='write')
-        write(lu,*) '# t, ke'
-        close(lu)
-
-    end subroutine initialise_ke_output
-
-    subroutine output(t, x, v, a, m, h, rho, u, P, c, ke, n_max, n, n_ghosts, ifile)
-        integer, intent(in) :: n_max, n, n_ghosts, ifile
-        real, intent(in) :: t, x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
-        u(n_max), P(n_max), c(n_max), ke(n_max)
-        integer :: lu = 1, i
-        character(len=128) :: filename
-
-        write(filename,"(a,i5.5)") 'output/snap_', ifile
-        print "(a,f8.3)", ' writing '//trim(filename)// ' t =',t
-        open(lu , file=filename, status='replace', action='write')
-        write(lu,*) '# x, v, a, m, h, rho, u, P, c, ke'
-        write(lu,*) t
-        do i=1,n + n_ghosts
-            write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i), ke(i)
-        enddo
-        close(lu)
-
-    end subroutine output
 
 end module init

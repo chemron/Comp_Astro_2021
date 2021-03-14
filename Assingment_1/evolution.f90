@@ -2,6 +2,7 @@ module evolution
     use init
     use derivs
     use physics
+    use outputs
     implicit none
 
 
@@ -28,18 +29,6 @@ contains
         t = t + dt
 
     end subroutine leapfrog
-
-
-    subroutine print_ke(t, ke)
-        real, intent(in) :: t, ke
-        integer :: lu = 1
-        open(lu , file='energy.out', status='old', access='append')
-        ! '# t, ke'
-        write(lu,*) t, ke
-
-        close(lu)
-
-    end subroutine print_ke
 
 
     subroutine timestepping(x, v, a, m, h, rho, u, P, c, ke, c_0, t_start, t_end, dt, dtout, x_min, x_max, n_max, n_ghosts, n)
