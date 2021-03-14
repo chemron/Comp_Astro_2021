@@ -69,6 +69,7 @@ module init
             x(i + n_left) = 0.0 + dx_right*(i - 0.5)
         enddo
 
+
         ! set mass left and right of origin
         do i=1, n_left
             m(i) = rho_left*dx_left
@@ -90,19 +91,9 @@ module init
 
 
         ! ! setup velocity
-        ! do i = 1, n
-        !     v(i) = 10.0 ** (-4) * c_0 * sin(2 * pi * (x(i)-x_min) / (x_max-x_min))
-        ! enddo
-
-        ! ! setup mass
-        ! do i = 1, n
-        !     m(i) = rho_0*dx
-        ! enddo
-
-        ! ! setup smoothing length
-        ! do i = 1, n
-        !     h(i) = 1.2 * dx
-        ! enddo
+        do i = 1, n
+            v(i) = 0
+        enddo
 
 
     end subroutine isothermal_setup
@@ -157,7 +148,7 @@ module init
             ! left boundary:
             v(i) = 0.0
             ! right boundary:
-            v(n - i) = 0.0
+            v(n - (i-1)) = 0.0
         enddo
 
     end subroutine set_boundary

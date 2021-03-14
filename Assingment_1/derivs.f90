@@ -4,7 +4,7 @@ module derivs
 
 contains
 
-    subroutine kernal(x_a, x_b, h, W, grad_W)
+    subroutine kernel(x_a, x_b, h, W, grad_W)
         real, intent(in) :: x_a, x_b, h
         real, intent(out) :: W, grad_W
         real :: q, grad_q, dw
@@ -44,7 +44,7 @@ contains
 
         grad_W = dW * grad_q
 
-    end subroutine kernal
+    end subroutine kernel
 
 
     subroutine  get_smoothing_length(m, rho, h, n, n_max)
@@ -74,7 +74,7 @@ contains
             rho(a) = 0
             ! summation:
             do b = 1, n + n_ghosts
-                call kernal(x(a), x(b), h(a), W, grad_W)
+                call kernel(x(a), x(b), h(a), W, grad_W)
                 rho(a) = rho(a) + m(b) * W
             enddo
 
@@ -118,23 +118,25 @@ contains
     end subroutine viscosity
 
 
-    subroutine get_accel(x, v, a, m, h, rho, P, c, n_max, n_ghosts, n, alpha, beta)
+    subroutine get_accel(x, v, a, m, h, rho, P, c, dudt, n_max, n_ghosts, n, alpha, beta)
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: i, j
         real :: W, grad_W_i, grad_W_j, q_i, q_j
         real, intent(in) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), P(n_max), c(n_max), alpha, beta
-        real, intent(out) :: a(n_max)
+        real, intent(out) :: a(n_max), dudt(n_max)
 
         do i = 1, n
             a(i) = 0.0
+            dudt(i) = 0.0
 
             do j = 1, n + n_ghosts
                 ! grad_W should be zero if i == j
                 if (i /= j) then
                     call viscosity(x(i), x(j), v(i), v(j), rho(i), rho(j), c(i), c(j), q_i, q_j, alpha, beta)
-                    call kernal(x(i), x(j), h(i), W, grad_W_i)
-                    call kernal(x(i), x(j), h(j), W, grad_W_j)
+                    call kernel(x(i), x(j), h(i), W, grad_W_i)
+                    call kernel(x(i), x(j), h(j), W, grad_W_j)
                     a(i) = a(i) - m(j) * ((P(i) + q_i)/rho(i)**2 * grad_W_i + (P(j) + q_j)/rho(j)**2 * grad_W_j)
+                    dudt(i) = dudt(i) + m(j) * m(j) * ((P(i) + q_i)/rho(i)**2 *(v(i) - v(j)) * grad_W_i)
                 endif
             enddo
         enddo
@@ -142,14 +144,14 @@ contains
     end subroutine get_accel
 
 
-    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, c_0, x_min, x_max, n_max, n, n_ghosts)
+    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, x_min, x_max, n_max, n, n_ghosts)
         integer :: i
         integer, intent(in) :: n_max, n_ghosts, n
         real, intent(in) :: c_0, x_min, x_max
         real, parameter :: rho_0 = 1.0
         real :: alpha, beta
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
-        u(n_max), P(n_max), c(n_max)
+        u(n_max), P(n_max), c(n_max), dudt(n_max)
         alpha = 1.0
         beta = 2.0
         ! for no viscosity:
@@ -163,7 +165,7 @@ contains
             call get_smoothing_length(m, rho, h, n, n_max)
         enddo
         ! call again so it's updated for current smoothing length
-        ! call get_density(x, m, h, rho, n_max, n_ghosts, n)
+        call get_density(x, m, h, rho, n_max, n_ghosts, n)
 
 
         call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
@@ -171,9 +173,8 @@ contains
 
         ! TODO: remove pressure, soundspeed, acceleration
         call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
-        
 
-        call get_accel(x, v, a, m, h, rho, P, c, n_max, n_ghosts, n, alpha, beta)
+        call get_accel(x, v, a, m, h, rho, P, c, dudt, n_max, n_ghosts, n, alpha, beta)
 
 
     end subroutine get_derivs
