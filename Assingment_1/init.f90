@@ -41,7 +41,7 @@ module init
 
     end subroutine setup
 
-    subroutine isothermal_setup(x, v, m, h, c_0, n_max, n)
+    subroutine isothermal_setup(x, v, m, h, n_max, n)
 
         integer, intent(in) :: n_max
         integer :: n_left, n_right
@@ -49,7 +49,6 @@ module init
         real, parameter :: rho_left = 1.0, rho_right = 0.1
         real :: x_min = -0.5, x_max = 0.5
         real :: dx_left = 0.001, dx_right = 0.01
-        real, intent(in) :: c_0
         integer :: i
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
         real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max)
@@ -80,7 +79,7 @@ module init
         enddo
 
         
-        ! set mass left and right of origin
+        ! set h left and right of origin
         do i=1, n_left
             h(i) = 1.2 * dx_left
         enddo
@@ -97,6 +96,82 @@ module init
 
 
     end subroutine isothermal_setup
+
+
+    subroutine sod_setup(x, v, rho, P, m, h, n_max, n)
+
+        integer, intent(in) :: n_max
+        integer :: n_left, n_right
+        integer, intent(out) :: n
+        real, parameter :: rho_left = 1.0, rho_right = 0.125, P_left = 1.0, P_right = 0.1
+        real :: x_min = -0.5, x_max = 0.5
+        real :: dx_left = 0.001, dx_right = 0.008
+        integer :: i
+        ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
+        real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), P(n_max)
+
+        ! calculate number of particles left and right of origin
+        ! (round to nearest whole number)
+        n_left = nint(abs(0 - x_min)/dx_left)
+        n_right = nint(abs(x_max - 0)/dx_right)
+        n = n_left + n_right
+
+        ! set position left and right of origin
+        do i=1, n_left
+            x(i) = x_min + dx_left*(i - 0.5)
+        enddo
+
+        do i=1, n_right
+            x(i + n_left) = 0.0 + dx_right*(i - 0.5)
+        enddo
+
+
+        ! set mass left and right of origin
+        do i=1, n_left
+            m(i) = rho_left*dx_left
+        enddo
+
+        do i=1, n_right
+            m(i + n_left) = rho_right*dx_right
+        enddo
+
+        
+        ! set h left and right of origin
+        do i=1, n_left
+            h(i) = 1.2 * dx_left
+        enddo
+
+        do i=1, n_right
+            h(i + n_left) = 1.2 * dx_right
+        enddo
+
+        
+        ! set density left and right of origin
+        do i=1, n_left
+            rho(i) = rho_left
+        enddo
+
+        do i=1, n_right
+            rho(i) = rho_right
+        enddo
+
+        ! set Pressure left and right of origin
+        do i=1, n_left
+            P(i) = P_left
+        enddo
+
+        do i=1, n_right
+            P(i) = P_right
+        enddo
+
+        ! setup velocity
+        do i = 1, n
+            v(i) = 0
+        enddo
+
+
+    end subroutine sod_setup
+
 
     subroutine set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
 

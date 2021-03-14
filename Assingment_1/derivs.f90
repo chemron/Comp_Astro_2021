@@ -91,6 +91,7 @@ contains
         real, intent(out) :: P(n_max), c(n_max)
 
         if (adiabatic) then
+            ! TODO: what should c be?
             c(i) = c_0
             P(i) = (gamma - 1) * rho(i) * u(i)
         endif

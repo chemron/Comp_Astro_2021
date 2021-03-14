@@ -6,6 +6,10 @@ iso:
 	gfortran -fdefault-real-8 -fdefault-double-8 -o isothermal init.f90 outputs.f90 derivs.f90 evolution.f90 isothermal.f90
 	./isothermal
 
+sod:
+	gfortran -fdefault-real-8 -fdefault-double-8 -o sod init.f90 outputs.f90 derivs.f90 evolution.f90 sod.f90
+	./sod
+
 debug:
 	gfortran -fdefault-real-8 -fdefault-double-8 -fcheck=all -Wall -o main init.f90 outputs.f90 derivs.f90 evolution.f90 main.f90
 	./main
