@@ -148,4 +148,21 @@ module init
 
     end subroutine set_ghosts
 
+    subroutine set_boundary(v, n, n_max, n_bound)
+        integer, intent(in) :: n, n_max, n_bound
+        real, intent(inout) :: v(n_max)
+        integer :: i
+
+        do i = 1, n_bound
+            ! left boundary:
+            v(i) = 0.0
+            ! right boundary:
+            v(n - i) = 0.0
+        enddo
+
+    end subroutine set_boundary
+
+
+
+
 end module init

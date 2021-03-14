@@ -162,7 +162,9 @@ contains
             call get_density(x, m, h, rho, n_max, n_ghosts, n)
             call get_smoothing_length(m, rho, h, n, n_max)
         enddo
-    
+        ! call again so it's updated for current smoothing length
+        ! call get_density(x, m, h, rho, n_max, n_ghosts, n)
+
 
         call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
 
