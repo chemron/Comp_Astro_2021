@@ -7,9 +7,9 @@ program isothermal
     implicit none
     
     integer, parameter :: n_max = 600, n_ghosts = 0, n_bound = 6
-    real, parameter :: x_min = 0.0, x_max = 1.0
+    real, parameter :: x_min = 0.0, x_max = 1.0, gamma = 1.4
     real, parameter :: c_0 = 1
-    ! logical, parameter :: iso = .True.
+    logical, parameter :: adiabatic = .True.
     integer :: n
     real :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max), ke(n_max), &
     dudt(n_max), t_start, t_end, dt, dtout
@@ -20,7 +20,7 @@ program isothermal
     ! call setup(x, v, m, h, c_0, x_min, x_max, n_max, n)
     call isothermal_setup(x, v, m, h, c_0, n_max, n)
 
-    call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, x_min, x_max, n_max, n, n_ghosts)
+    call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, n_ghosts, adiabatic)
     
     call set_boundary(v, n, n_max, n_bound)
 
@@ -35,7 +35,7 @@ program isothermal
     dtout = 0.001
     dt = 0.2 * minval(h(1:n)/c(1:n))
 
-    call timestepping(x, v, a, m, h, rho, u, P, c, ke, dudt, c_0, t_start, t_end, &
-                      dt, dtout, x_min, x_max, n_max, n_ghosts, n, n_bound)
+    call timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, t_start, t_end, dt, &
+    dtout, x_min, x_max, n_max, n_ghosts, n, n_bound, adiabatic)
 
 end program isothermal

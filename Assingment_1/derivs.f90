@@ -71,7 +71,7 @@ contains
         real, intent(out) :: rho(n_max)
 
         do a = 1, n
-            rho(a) = 0
+            rho(a) = 0.0
             ! summation:
             do b = 1, n + n_ghosts
                 call kernel(x(a), x(b), h(a), W, grad_W)
@@ -83,12 +83,17 @@ contains
     end subroutine get_density
 
 
-    subroutine equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
+    subroutine equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghosts, adiabatic)
         integer, intent(in) :: n_max, n_ghosts, n
         integer :: i
-        real, intent(in) :: rho(n_max), c_0
+        real, intent(in) :: rho(n_max), u(n_max), c_0, gamma
+        logical, intent(in) :: adiabatic
         real, intent(out) :: P(n_max), c(n_max)
 
+        if (adiabatic) then
+            c(i) = c_0
+            P(i) = (gamma - 1) * rho(i) * u(i)
+        endif
         ! use eos from lecture 1
         do i = 1, n + n_ghosts
             c(i) = c_0
@@ -144,10 +149,11 @@ contains
     end subroutine get_accel
 
 
-    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, x_min, x_max, n_max, n, n_ghosts)
+    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, n_ghosts, adiabatic)
         integer :: i
         integer, intent(in) :: n_max, n_ghosts, n
-        real, intent(in) :: c_0, x_min, x_max
+        real, intent(in) :: c_0, x_min, x_max, gamma
+        logical, intent(in) :: adiabatic
         real, parameter :: rho_0 = 1.0
         real :: alpha, beta
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
@@ -168,7 +174,7 @@ contains
         call get_density(x, m, h, rho, n_max, n_ghosts, n)
 
 
-        call equation_of_state(rho, P, c, c_0, n_max, n, n_ghosts)
+        call equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghosts, adiabatic)
 
 
         ! TODO: remove pressure, soundspeed, acceleration
