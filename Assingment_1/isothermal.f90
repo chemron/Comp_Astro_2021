@@ -6,7 +6,7 @@ program isothermal
 
     implicit none
     
-    integer, parameter :: n_max = 600, n_ghosts = 0, n_bound = 6
+    integer, parameter :: n_max = 1200, n_ghosts = 0, n_bound = 6
     real, parameter :: x_min = 0.0, x_max = 1.0, gamma = 1.4
     real, parameter :: c_0 = 1
     logical, parameter :: adiabatic = .True.
@@ -18,7 +18,7 @@ program isothermal
 
     ! initialise
     ! call setup(x, v, m, h, c_0, x_min, x_max, n_max, n)
-    call isothermal_setup(x, v, m, h, c_0, n_max, n)
+    call isothermal_setup(x, v, m, h, n_max, n)
 
     call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, n_ghosts, adiabatic)
     

@@ -37,7 +37,7 @@ contains
         open(lu , file=filename, status='replace', action='write')
         write(lu,*) '# x, v, a, m, h, rho, u, P, c, ke, dudt'
         write(lu,*) t
-        do i=1,n + n_ghosts
+        do i=1, n + n_ghosts
             write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i), ke(i), dudt(i)
         enddo
         close(lu)

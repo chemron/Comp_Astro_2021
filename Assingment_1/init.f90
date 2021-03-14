@@ -59,41 +59,51 @@ module init
         n_right = nint(abs(x_max - 0)/dx_right)
         n = n_left + n_right
 
-        ! set position left and right of origin
+        ! left of origin
         do i=1, n_left
+            ! position
             x(i) = x_min + dx_left*(i - 0.5)
-        enddo
-
-        do i=1, n_right
-            x(i + n_left) = 0.0 + dx_right*(i - 0.5)
-        enddo
-
-
-        ! set mass left and right of origin
-        do i=1, n_left
+            ! mass
             m(i) = rho_left*dx_left
-        enddo
-
-        do i=1, n_right
-            m(i + n_left) = rho_right*dx_right
-        enddo
-
-        
-        ! set h left and right of origin
-        do i=1, n_left
+            ! smoothing length
             h(i) = 1.2 * dx_left
         enddo
 
+        ! right of origin
         do i=1, n_right
+            ! position
+            x(i + n_left) = 0.0 + dx_right*(i - 0.5)
+            ! mass
+            m(i + n_left) = rho_right*dx_right
+            ! smoothing length
             h(i + n_left) = 1.2 * dx_right
         enddo
 
+        ! mirror across -0.5 to make it periodic
+        do i=1, n_left
+            ! position
+            x(n + i) = x_min - dx_left*(i - 0.5)
+            ! mass
+            m(n + i) = rho_left*dx_left
+            ! smoothing length
+            h(n + i) = 1.2 * dx_left
+        enddo
 
-        ! ! setup velocity
-        do i = 1, n
+        do i=1, n_right
+            ! position
+            x(n + i + n_left) = 0.0 + 2*x_min - dx_right*(i - 0.5)
+            ! mass
+            m(n + i + n_left) = rho_right*dx_right
+            ! smoothing length
+            h(n + i + n_left) = 1.2 * dx_right
+        enddo
+
+        ! setup velocity
+        do i = 1, 2 * n
             v(i) = 0
         enddo
 
+        n = n*2
 
     end subroutine isothermal_setup
 
