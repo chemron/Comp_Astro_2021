@@ -8,7 +8,7 @@ program main
     
     integer, parameter :: n_max = 150, n_ghosts = 10, n_bound = 0
     real, parameter :: x_min = 0.0, x_max = 1.0, gamma = 0.0
-    real, parameter :: c_0 = 1
+    real, parameter :: c_0 = 1.0
     integer :: n
     logical, parameter :: adiabatic = .False.
     real :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max), ke(n_max), &
