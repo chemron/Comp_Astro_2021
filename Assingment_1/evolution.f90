@@ -1,15 +1,15 @@
 module evolution
-    use init
     use derivs
     use outputs
+    use edges
     implicit none
 
 
 contains
 
     subroutine leapfrog(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, alpha, beta, t, dt, &
-        x_min, x_max, n_max, n, n_ghosts, adiabatic)
-        integer, intent(in) :: n, n_max, n_ghosts
+        x_min, x_max, n_max, n, adiabatic)
+        integer, intent(in) :: n, n_max
         real, intent(in) :: x_min, x_max, c_0, gamma, alpha, beta
         logical, intent(in) :: adiabatic
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
@@ -20,18 +20,19 @@ contains
 
         ! keep initial value
         a_0(1:n) = a(1:n)
+
         dudt_0(1:n) = dudt(1:n)
 
         ! update position
         x(1:n) = x(1:n) + dt * v(1:n) + 0.5 * dt**2 * a_0(1:n)
-    
+
         ! get intermediate volicity
         v_s(1:n) = v(1:n) + dt * a_0(1:n)
         ! get inetmediat internal energy
         u_s(1:n) = u(1:n) + dt * dudt_0(1:n)
 
         call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, &
-        n, n_ghosts, adiabatic, alpha, beta)
+        n, adiabatic, alpha, beta)
 
         v(1:n) = v_s(1:n) + 0.5 * dt * (a(1:n) - a_0(1:n))
         u(1:n) = u_s(1:n) + 0.5 * dt * (dudt(1:n) - dudt_0(1:n))
@@ -57,8 +58,8 @@ contains
 
 
     subroutine timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, alpha, beta, t_start, t_end, dt, &
-        dtout, x_min, x_max, n_max, n_ghosts, n, n_bound, adiabatic)
-        integer, intent(in) :: n, n_max, n_ghosts, n_bound
+        dtout, x_min, x_max, n_max, n, n_bound, adiabatic)
+        integer, intent(in) :: n, n_max, n_bound
         real, intent(in) :: x_min, x_max, c_0, t_start, t_end, dtout, gamma, alpha, beta
         logical, intent(in) :: adiabatic
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), &
@@ -73,7 +74,7 @@ contains
 
             ! single leapfrog step
             call leapfrog(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, alpha, beta, t, &
-            dt, x_min, x_max, n_max, n, n_ghosts, adiabatic)
+            dt, x_min, x_max, n_max, n, adiabatic)
 
             ! set boundary conditions
             call set_boundary(v, n, n_max, n_bound)
@@ -86,10 +87,11 @@ contains
 
             ! print output
             if (t >= tprint) then
-                call output(t, x, v, a, m, h, rho, u, P, c, ke, dudt, n_max, n, n_ghosts, ifile)
+                call output(t, x, v, a, m, h, rho, u, P, c, ke, dudt, n_max, n, ifile)
                 ifile = ifile + 1
                 tprint = ifile * dtout
             endif
+
         enddo
 
 

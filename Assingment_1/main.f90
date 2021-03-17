@@ -2,11 +2,12 @@ program main
     use derivs
     use outputs
     use evolution
+    use edges
     use init
 
     implicit none
     
-    integer, parameter :: n_max = 150, n_ghosts = 10, n_bound = 0
+    integer, parameter :: n_max = 150, n_bound = 0
     real, parameter :: x_min = 0.0, x_max = 1.0, gamma = 0.0
     real, parameter :: c_0 = 1.0, alpha = 1.0, beta = 2.0
     integer :: n
@@ -20,9 +21,9 @@ program main
     ! initialise
     call setup(x, v, m, h, c_0, x_min, x_max, n_max, n)
 
-    call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, n_ghosts, adiabatic, alpha, beta)
+    call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, adiabatic, alpha, beta)
 
-    call output(0.0, x, v, a, m, h, rho, u, P, c, ke, dudt, n_max, n, n_ghosts, 0)
+    call output(0.0, x, v, a, m, h, rho, u, P, c, ke, dudt, n_max, n, 0)
 
     ! initiallise ke file
     call initialise_ke_output()
@@ -32,9 +33,8 @@ program main
     t_end = 5.0
     dtout = 0.05
     dt = 0.2 * minval(h(1:n)/c(1:n))
-    print*, dt
 
     call timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, alpha, beta, t_start, t_end, dt, &
-    dtout, x_min, x_max, n_max, n_ghosts, n, n_bound, adiabatic)
+    dtout, x_min, x_max, n_max, n, n_bound, adiabatic)
 
 end program main
