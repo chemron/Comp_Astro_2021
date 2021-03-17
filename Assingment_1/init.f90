@@ -108,7 +108,7 @@ module init
     end subroutine isothermal_setup
 
 
-    subroutine sod_setup(x, v, rho, u, P, m, h, n_max, n)
+    subroutine sod_setup(x, v, rho, u, P, m, h, n_max, n, gamma)
 
         integer, intent(in) :: n_max
         integer :: n_left, n_right
@@ -116,6 +116,7 @@ module init
         real, parameter :: rho_left = 1.0, rho_right = 0.125, P_left = 1.0, P_right = 0.1
         real :: x_min = -0.5, x_max = 0.5
         real :: dx_left = 0.001, dx_right = 0.008
+        real, intent(in) :: gamma
         integer :: i
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
         real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), P(n_max), u(n_max)
@@ -126,66 +127,76 @@ module init
         n_right = nint(abs(x_max - 0)/dx_right)
         n = n_left + n_right
 
-        ! set position left and right of origin
+        ! left of origin
         do i=1, n_left
+            ! position
             x(i) = x_min + dx_left*(i - 0.5)
-        enddo
-
-        do i=1, n_right
-            x(i + n_left) = 0.0 + dx_right*(i - 0.5)
-        enddo
-
-
-        ! set mass left and right of origin
-        do i=1, n_left
+            ! mass
             m(i) = rho_left*dx_left
-            ! calculated using initial Pressure, density and gamma for adiabatic
-            ! eos
-            ! TODO: make this fit for changing variables
-            u(i) = 2.5
-        enddo
-
-        do i=1, n_right
-            m(i + n_left) = rho_right*dx_right
-            ! calculated using initial Pressure, density and gamma for adiabatic
-            ! eos
-            u(i + n_left) = 2.0
-        enddo
-
-        
-        ! set h left and right of origin
-        do i=1, n_left
+            ! smoothing length
             h(i) = 1.2 * dx_left
-        enddo
-
-        do i=1, n_right
-            h(i + n_left) = 1.2 * dx_right
-        enddo
-
-        
-        ! set density left and right of origin
-        do i=1, n_left
+            ! density
             rho(i) = rho_left
-        enddo
-
-        do i=1, n_right
-            rho(i) = rho_right
-        enddo
-
-        ! set Pressure left and right of origin
-        do i=1, n_left
+            ! Pressure
             P(i) = P_left
+            ! internal energy according to adiabatic eos
+            u(i) = P_left/((gamma - 1)*rho_left)
+        enddo
+
+        ! right of origin
+        do i=1, n_right
+            ! position
+            x(i + n_left) = 0.0 + dx_right*(i - 0.5)
+            ! mass
+            m(i + n_left) = rho_right*dx_right
+            ! smoothing length
+            h(i + n_left) = 1.2 * dx_right
+            ! density
+            rho(i + n_left) = rho_right
+            ! Pressure
+            P(i + n_left) = P_right
+            ! internal energy according to adiabatic eos
+            u(i + n_left) = P_right/((gamma - 1)*rho_right)
+        enddo
+
+        ! mirror across -0.5 to make it periodic
+        do i=1, n_left
+            ! position
+            x(n + i) = x_min - dx_left*(i - 0.5)
+            ! mass
+            m(n + i) = rho_left*dx_left
+            ! smoothing length
+            h(n + i) = 1.2 * dx_left
+            ! density
+            rho(n + i) = rho_left
+            ! Pressure
+            P(n + i) = P_left
+            ! internal energy according to adiabatic eos
+            u(n + i) = P_left/((gamma - 1)*rho_left)
         enddo
 
         do i=1, n_right
-            P(i) = P_right
+            ! position
+            x(n + i + n_left) = 0.0 + 2*x_min - dx_right*(i - 0.5)
+            ! mass
+            m(n + i + n_left) = rho_right*dx_right
+            ! smoothing length
+            h(n + i + n_left) = 1.2 * dx_right
+            ! density
+            rho(n + i + n_left) = rho_right
+            ! Pressure
+            P(n + i + n_left) = P_right
+            ! internal energy according to adiabatic eos
+            u(n + i + n_left) = P_right/((gamma - 1)*rho_right)
         enddo
 
         ! setup velocity
-        do i = 1, n
-            v(i) = 0.0
+        do i = 1, 2 * n
+            v(i) = 0
         enddo
 
+        n = n*2
+        
     end subroutine sod_setup
 
 
@@ -233,13 +244,19 @@ module init
     subroutine set_boundary(v, n, n_max, n_bound)
         integer, intent(in) :: n, n_max, n_bound
         real, intent(inout) :: v(n_max)
-        integer :: i
+        integer :: i, n_mid
 
         do i = 1, n_bound
             ! left boundary:
             v(i) = 0.0
             ! right boundary:
             v(n - (i-1)) = 0.0
+            
+            n_mid = n/2
+            ! middle left boundary:
+            v(n_mid + i) = 0.0
+            ! middle right boundary:
+            v(n_mid - (i-1)) = 0.0
         enddo
 
     end subroutine set_boundary
