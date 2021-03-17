@@ -149,7 +149,7 @@ module init
             m(i + n_left) = rho_right*dx_right
             ! calculated using initial Pressure, density and gamma for adiabatic
             ! eos
-            u(i) = 2.0
+            u(i + n_left) = 2.0
         enddo
 
         
@@ -184,7 +184,6 @@ module init
         ! setup velocity
         do i = 1, n
             v(i) = 0.0
-            u(i) = 1.0
         enddo
 
     end subroutine sod_setup

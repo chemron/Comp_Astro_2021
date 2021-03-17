@@ -27,7 +27,7 @@ contains
         ! get intermediate volicity
         v_s = v + dt * a_0
         ! get inetmediat internal energy
-        u_s = u + dt * dudt
+        u_s = u + dt * dudt_0
 
         call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, n_ghosts, adiabatic)
 
@@ -69,7 +69,7 @@ contains
 
             ! single leapfrog step
             call leapfrog(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, t, dt, x_min, x_max, n_max, n, n_ghosts, adiabatic)
-            
+
             ! set boundary conditions
             call set_boundary(v, n, n_max, n_bound)
 

@@ -145,7 +145,7 @@ contains
                     call kernel(x(i), x(j), h(i), W, grad_W_i)
                     call kernel(x(i), x(j), h(j), W, grad_W_j)
                     a(i) = a(i) - m(j) * ((P(i) + q_i)/rho(i)**2 * grad_W_i + (P(j) + q_j)/rho(j)**2 * grad_W_j)
-                    dudt(i) = dudt(i) + m(j) * m(j) * ((P(i) + q_i)/rho(i)**2 *(v(i) - v(j)) * grad_W_i)
+                    dudt(i) = dudt(i) + m(j) * ((P(i) + q_i)/rho(i)**2 *(v(i) - v(j)) * grad_W_i)
                 endif
             enddo
         enddo
