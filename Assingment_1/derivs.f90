@@ -54,7 +54,6 @@ contains
         integer, intent(in) :: n, n_max
         real, intent(in) :: m(n_max), rho(n_max)
         real, intent(inout) :: h(n_max)
-        ! TODO: justify eta/h_fac
         eta = 1.2
         do i = 1, n
             h(i) = eta * (m(i) / rho(i))**(1/n_dim)
@@ -89,17 +88,19 @@ contains
         real, intent(in) :: rho(n_max), u(n_max), c_0, gamma
         logical, intent(in) :: adiabatic
         real, intent(out) :: P(n_max), c(n_max)
+        ! Also loop over ghosts, because ghosts' pressure is required for accelaration
 
+        ! Adiabatic EOS
         if (adiabatic) then
             do i = 1, n + n_ghosts
                 P(i) = (gamma - 1) * rho(i) * u(i)
                 c(i) = sqrt(gamma * P(i) / rho(i))
             enddo
+        ! Isothermal EOS
         else
-           ! use eos from lecture 1
             do i = 1, n + n_ghosts
-                c(i) = c_0
                 P(i) = c(i)**2 * rho(i)
+                c(i) = c_0
             enddo
         endif
 
@@ -162,7 +163,7 @@ contains
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
         u(n_max), P(n_max), c(n_max), dudt(n_max)
 
-        call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
+        call set_ghosts(x, v, m, h, rho, u, x_min, x_max, n_max, n, n_ghosts)
 
         do i = 1, 3
             call get_density(x, m, h, rho, n_max, n_ghosts, n)
@@ -171,12 +172,9 @@ contains
         ! call again so it's updated for current smoothing length
         call get_density(x, m, h, rho, n_max, n_ghosts, n)
 
-
+        ! update with new density
+        call set_ghosts(x, v, m, h, rho, u, x_min, x_max, n_max, n, n_ghosts)
         call equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghosts, adiabatic)
-
-
-        ! TODO: remove pressure, soundspeed, acceleration
-        call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
 
         call get_accel(x, v, a, m, h, rho, P, c, dudt, n_max, n_ghosts, n, alpha, beta)
 

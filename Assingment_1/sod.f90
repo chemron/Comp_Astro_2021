@@ -33,7 +33,6 @@ program sod
     t_end = 0.2
     dtout = 0.002
 
-    ! TODO: update every step
     dt = 0.2 * minval(h(1:n)/c(1:n))
 
     call timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, alpha, beta, t_start, t_end, dt, &

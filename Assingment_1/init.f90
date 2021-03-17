@@ -200,14 +200,13 @@ module init
     end subroutine sod_setup
 
 
-    subroutine set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
+    subroutine set_ghosts(x, v, m, h, rho, u, x_min, x_max, n_max, n, n_ghosts)
 
         integer, intent(in) :: n_max, n_ghosts, n
         real, intent(in) :: x_min, x_max
         integer :: i
         real, parameter :: rho_0 = 1.0
-        real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
-        u(n_max), P(n_max), c(n_max)
+        real, intent(inout) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), u(n_max)
         real :: width
 
         ! get width
@@ -217,13 +216,10 @@ module init
         do i=1, n_ghosts/2
             x(n + i) = x(i) + width
             v(n + i) = v(i)
-            a(n + i) = a(i)
             m(n + i) = m(i)
             h(n + i) = h(i)
             rho(n + i) = rho(i)
             u(n + i) = u(i)
-            P(n + i) = P(i)
-            c(n + i) = c(i)
         enddo
 
         ! left ghosts
@@ -234,9 +230,6 @@ module init
             h(i + n + n_ghosts/2) = h(n + 1 - i)
             rho(i + n + n_ghosts/2) = rho(n + 1 - i)
             u(i + n + n_ghosts/2) = u(n + 1 - i)
-            P(i + n + n_ghosts/2) = P(n + 1 - i)
-            c(i + n + n_ghosts/2) = c(n + 1 - i)
-
         enddo
 
     end subroutine set_ghosts
