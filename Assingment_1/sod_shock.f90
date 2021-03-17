@@ -34,7 +34,6 @@ program sod
     dtout = 0.002
 
     dt = 0.2 * minval(h(1:n)/c(1:n))
-    print*, dt, x(n), v(n), a(n), m(n), h(n), rho(n), u(n), P(n), c(n)
 
     call timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, alpha, beta, t_start, t_end, dt, &
     dtout, x_min, x_max, n_max, n, n_bound)

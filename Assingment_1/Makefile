@@ -11,8 +11,8 @@ iso:
 	./isothermal
 
 sod:
-	gfortran ${FFLAGS} -o sod ${FILES} sod.f90
-	./sod
+	gfortran ${FFLAGS} -o sod_shock ${FILES} sod_shock.f90
+	./sod_shock
 
 debug:
 	gfortran ${FFLAGS} -fcheck=all -Wall -fbacktrace -Wextra -o ${DEBUG} ${FILES} ${DEBUG}.f90
@@ -25,4 +25,4 @@ energy:
 	gfortran ${FFLAGS} -o main ${FILES} main.f90
 	./main
 clean:
-	rm *.out *.mod output/snap* main isothermal sod
+	rm *.out *.mod output/snap* main isothermal sod_shock

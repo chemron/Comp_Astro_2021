@@ -125,8 +125,8 @@ module init
 
         ! calculate number of particles left and right of origin
         ! (round to nearest whole number)
-        n_left = nint(abs(0 - x_min)/dx_left)
-        n_right = nint(abs(x_max - 0)/dx_right)
+        n_left = int(abs(0 - x_min)/dx_left)
+        n_right = int(abs(x_max - 0)/dx_right)
         n = n_left + n_right
 
         ! left of origin
@@ -197,9 +197,13 @@ module init
             v(i) = 0
         enddo
 
-        ! after mirroing, we've doubled the number of particles, and changed xmin:
+        ! after mirroing, we've doubled the number of particles
         n = n*2
-        x_min = x_min - (x_max - x_min)
+        ! update x min and x max to match positions
+        ! note: particles are in cells of width dx, and so x_min/max are half a
+        ! cell away from a particle
+        x_max = x(n_left + n_right) + dx_right/2.0
+        x_min = x(n) - dx_right/2.0
         
     end subroutine sod_setup
 
