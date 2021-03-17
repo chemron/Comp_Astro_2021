@@ -14,9 +14,7 @@ module edges
 
         ! get width
         width = abs(x_max - x_min)
-
         n_ghost = 0
-
         do i = 1, n
             if (x(i) - 2 * h(i) .LE. x_min) then
                 ! right ghosts
@@ -38,7 +36,6 @@ module edges
                 u(n + n_ghost) = u(i)
             endif
         enddo
-
     end subroutine set_ghosts
 
     subroutine set_boundary(v, n, n_max, n_bound)

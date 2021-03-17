@@ -83,28 +83,26 @@ contains
     end subroutine get_density
 
 
-    subroutine equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghost, adiabatic)
+    subroutine equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghost)
         integer, intent(in) :: n_max, n_ghost, n
         integer :: i
         real, intent(in) :: rho(n_max), u(n_max), c_0, gamma
-        logical, intent(in) :: adiabatic
         real, intent(out) :: P(n_max), c(n_max)
         ! Also loop over ghosts, because ghosts' pressure is required for accelaration
 
-        ! Adiabatic EOS
-        if (adiabatic) then
-            do i = 1, n + n_ghost
-                P(i) = (gamma - 1) * rho(i) * u(i)
-                c(i) = sqrt(gamma * P(i) / rho(i))
-            enddo
         ! Isothermal EOS
-        else
+        if (abs(gamma - 1.0) < tiny(0.0)) then
             do i = 1, n + n_ghost
                 c(i) = c_0
                 P(i) = c(i)**2 * rho(i)
             enddo
+        ! Adiabatic EOS
+        else
+            do i = 1, n + n_ghost
+                P(i) = (gamma - 1) * rho(i) * u(i)
+                c(i) = sqrt(gamma * P(i) / rho(i))
+            enddo
         endif
-
 
     end subroutine equation_of_state
 
@@ -155,14 +153,12 @@ contains
     end subroutine get_accel
 
 
-    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, adiabatic, alpha, beta)
+    subroutine get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, alpha, beta)
         integer :: i, n_ghost
         integer, intent(in) :: n_max, n
         real, intent(in) :: c_0, x_min, x_max, gamma, alpha, beta
-        logical, intent(in) :: adiabatic
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
         u(n_max), P(n_max), c(n_max), dudt(n_max)
-
         call set_ghosts(x, v, m, h, rho, u, x_min, x_max, n_max, n, n_ghost)
         do i = 1, 3
             call get_density(x, m, h, rho, n_max, n_ghost, n)
@@ -174,7 +170,7 @@ contains
 
         ! update with new density
         call set_ghosts(x, v, m, h, rho, u, x_min, x_max, n_max, n, n_ghost)
-        call equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghost, adiabatic)
+        call equation_of_state(rho, P, c, u, c_0, gamma, n_max, n, n_ghost)
 
         call get_accel(x, v, a, m, h, rho, P, c, dudt, n_max, n_ghost, n, alpha, beta)
 

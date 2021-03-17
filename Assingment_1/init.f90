@@ -110,13 +110,13 @@ module init
     end subroutine isothermal_setup
 
 
-    subroutine sod_setup(x, v, rho, u, P, m, h, n_max, n, gamma)
+    subroutine sod_setup(x, v, rho, u, P, m, h, x_min, x_max, n_max, n, gamma)
 
         integer, intent(in) :: n_max
         integer :: n_left, n_right
         integer, intent(out) :: n
         real, parameter :: rho_left = 1.0, rho_right = 0.125, P_left = 1.0, P_right = 0.1
-        real :: x_min = -0.5, x_max = 0.5
+        real, intent(inout) :: x_min, x_max
         real :: dx_left = 0.001, dx_right = 0.008
         real, intent(in) :: gamma
         integer :: i

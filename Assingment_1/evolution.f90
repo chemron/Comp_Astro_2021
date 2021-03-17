@@ -8,15 +8,12 @@ module evolution
 contains
 
     subroutine leapfrog(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, alpha, beta, t, dt, &
-        x_min, x_max, n_max, n, adiabatic)
+        x_min, x_max, n_max, n)
         integer, intent(in) :: n, n_max
         real, intent(in) :: x_min, x_max, c_0, gamma, alpha, beta
-        logical, intent(in) :: adiabatic
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
         u(n_max), P(n_max), c(n_max), dudt(n_max), t, dt
         real :: v_s(n_max), u_s(n_max), a_0(n_max), dudt_0(n_max)
-
-
 
         ! keep initial value
         a_0(1:n) = a(1:n)
@@ -32,7 +29,7 @@ contains
         u_s(1:n) = u(1:n) + dt * dudt_0(1:n)
 
         call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, &
-        n, adiabatic, alpha, beta)
+        n, alpha, beta)
 
         v(1:n) = v_s(1:n) + 0.5 * dt * (a(1:n) - a_0(1:n))
         u(1:n) = u_s(1:n) + 0.5 * dt * (dudt(1:n) - dudt_0(1:n))
@@ -58,10 +55,9 @@ contains
 
 
     subroutine timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, alpha, beta, t_start, t_end, dt, &
-        dtout, x_min, x_max, n_max, n, n_bound, adiabatic)
+        dtout, x_min, x_max, n_max, n, n_bound)
         integer, intent(in) :: n, n_max, n_bound
         real, intent(in) :: x_min, x_max, c_0, t_start, t_end, dtout, gamma, alpha, beta
-        logical, intent(in) :: adiabatic
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), &
         h(n_max), rho(n_max), u(n_max), P(n_max), c(n_max), ke(n_max), dudt(n_max), dt
         real :: t, tprint
@@ -74,7 +70,7 @@ contains
 
             ! single leapfrog step
             call leapfrog(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, alpha, beta, t, &
-            dt, x_min, x_max, n_max, n, adiabatic)
+            dt, x_min, x_max, n_max, n)
 
             ! set boundary conditions
             call set_boundary(v, n, n_max, n_bound)
