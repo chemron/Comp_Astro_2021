@@ -35,7 +35,7 @@ program isothermal
     dtout = 0.001
     dt = 0.2 * minval(h(1:n)/c(1:n))
 
-    call timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, t_start, t_end, dt, &
+    call timestepping(x, v, a, m, h, rho, u, P, c, dudt, ke, c_0, gamma, alpha, beta, t_start, t_end, dt, &
     dtout, x_min, x_max, n_max, n_ghosts, n, n_bound, adiabatic)
 
 end program isothermal
