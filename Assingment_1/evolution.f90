@@ -15,9 +15,11 @@ contains
         u(n_max), P(n_max), c(n_max), dudt(n_max), t, dt
         real :: v_s(n_max), u_s(n_max), a_0(n_max), dudt_0(n_max)
 
+        ! update dt
+        dt = 0.2 * minval(h(1:n)/c(1:n))
+
         ! keep initial value
         a_0(1:n) = a(1:n)
-
         dudt_0(1:n) = dudt(1:n)
 
         ! update position
@@ -35,7 +37,6 @@ contains
         u(1:n) = u_s(1:n) + 0.5 * dt * (dudt(1:n) - dudt_0(1:n))
 
         t = t + dt
-        dt = 0.2 * minval(h(1:n)/c(1:n))
 
 
     end subroutine leapfrog

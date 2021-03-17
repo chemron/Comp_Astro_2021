@@ -16,6 +16,10 @@ program main
     ! position (x), velocity (v), mass (m), smoothing length (h), density (rho), internal
     ! energy (u), pressure (P), and sound speed (c)
     print*, 'Hello World'
+    print*, "alpha: ", alpha
+    print*, "beta: ", beta
+    print*, "gamma ", gamma
+    
 
     ! initialise
     call setup(x, v, m, h, c_0, x_min, x_max, n_max, n)

@@ -7,7 +7,7 @@ program sod
 
     implicit none
     
-    integer, parameter :: n_max = 1200, n_bound = 6
+    integer, parameter :: n_max = 1200, n_bound = 10
     real :: x_min = -0.5, x_max = 0.5, gamma = 1.4
     real, parameter :: c_0 = 1.0, alpha = 0.0, beta = 0.0
     integer :: n
