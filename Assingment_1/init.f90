@@ -108,7 +108,7 @@ module init
     end subroutine isothermal_setup
 
 
-    subroutine sod_setup(x, v, rho, P, m, h, n_max, n)
+    subroutine sod_setup(x, v, rho, u, P, m, h, n_max, n)
 
         integer, intent(in) :: n_max
         integer :: n_left, n_right
@@ -118,7 +118,7 @@ module init
         real :: dx_left = 0.001, dx_right = 0.008
         integer :: i
         ! real, intent(in) :: x(n), v(n), m(n), h(n), rho(n), u(n), P(n), c(n)
-        real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), P(n_max)
+        real, intent(out) :: x(n_max), v(n_max), m(n_max), h(n_max), rho(n_max), P(n_max), u(n_max)
 
         ! calculate number of particles left and right of origin
         ! (round to nearest whole number)
@@ -139,10 +139,17 @@ module init
         ! set mass left and right of origin
         do i=1, n_left
             m(i) = rho_left*dx_left
+            ! calculated using initial Pressure, density and gamma for adiabatic
+            ! eos
+            ! TODO: make this fit for changing variables
+            u(i) = 2.5
         enddo
 
         do i=1, n_right
             m(i + n_left) = rho_right*dx_right
+            ! calculated using initial Pressure, density and gamma for adiabatic
+            ! eos
+            u(i) = 2.0
         enddo
 
         
@@ -176,9 +183,9 @@ module init
 
         ! setup velocity
         do i = 1, n
-            v(i) = 0
+            v(i) = 0.0
+            u(i) = 1.0
         enddo
-
 
     end subroutine sod_setup
 

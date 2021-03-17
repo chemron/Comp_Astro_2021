@@ -17,7 +17,7 @@ program sod
     ! energy (u), pressure (P), and sound speed (c)
 
     ! initialise
-    call sod_setup(x, v, rho, P, m, h, n_max, n)
+    call sod_setup(x, v, rho, u, P, m, h, n_max, n)
 
     call get_derivs(x, v, a, m, h, rho, u, P, c, dudt, c_0, gamma, x_min, x_max, n_max, n, n_ghosts, adiabatic)
     

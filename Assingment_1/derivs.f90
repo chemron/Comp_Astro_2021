@@ -91,15 +91,18 @@ contains
         real, intent(out) :: P(n_max), c(n_max)
 
         if (adiabatic) then
-            ! TODO: what should c be?
-            c(i) = c_0
-            P(i) = (gamma - 1) * rho(i) * u(i)
+            do i = 1, n + n_ghosts
+                P(i) = (gamma - 1) * rho(i) * u(i)
+                c(i) = sqrt(gamma * P(i) / rho(i))
+            enddo
+        else
+           ! use eos from lecture 1
+            do i = 1, n + n_ghosts
+                c(i) = c_0
+                P(i) = c(i)**2 * rho(i)
+            enddo
         endif
-        ! use eos from lecture 1
-        do i = 1, n + n_ghosts
-            c(i) = c_0
-            P(i) = c(i)**2 * rho(i)
-        enddo
+
 
     end subroutine equation_of_state
 
