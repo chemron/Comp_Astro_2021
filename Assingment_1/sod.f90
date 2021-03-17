@@ -6,7 +6,7 @@ program sod
 
     implicit none
     
-    integer, parameter :: n_max = 600, n_ghosts = 0, n_bound = 0
+    integer, parameter :: n_max = 600, n_ghosts = 0, n_bound = 10
     real, parameter :: x_min = 0.0, x_max = 1.0, gamma = 1.4
     real, parameter :: c_0 = 1
     logical, parameter :: adiabatic = .True.

@@ -162,10 +162,10 @@ contains
         real :: alpha, beta
         real, intent(inout) :: x(n_max), v(n_max), a(n_max), m(n_max), h(n_max), rho(n_max), &
         u(n_max), P(n_max), c(n_max), dudt(n_max)
-        alpha = 1.0
+        ! alpha = 1.0
         beta = 2.0
         ! for no viscosity:
-        ! alpha = 0.0
+        alpha = 0.0
         ! beta = 0.0
 
         call set_ghosts(x, v, a, m, h, rho, u, P, c, x_min, x_max, n_max, n, n_ghosts)
