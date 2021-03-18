@@ -16,6 +16,10 @@ program sod
     ! position (x), velocity (v), mass (m), smoothing length (h), density (rho), internal
     ! energy (u), pressure (P), and sound speed (c)
 
+    print*, "alpha: ", alpha
+    print*, "beta: ", beta
+    print*, "gamma ", gamma
+
     ! initialise
     call sod_setup(x, v, rho, u, P, m, h, x_min, x_max, n_max, n, gamma)
 

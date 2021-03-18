@@ -16,7 +16,7 @@
   7*1          ,
  IPLOTPARTOFTYPE=T, 11*F,
  PLOTONRENDERINGS= 12*F,
- IEXACT=0          ,
+ IEXACT=3          ,
  ICOORDSNEW=1          ,
  IFASTPARTICLEPLOT=T,
  IDEFAULTCOLOURTYPE= 12*-1         ,
@@ -169,7 +169,7 @@
  IEXACTPLOTY= 10*0          ,
  FILENAME_EXACT= 10*'                                                                                                                        ',
  MAXEXACTPTS=1001       ,
- IEXACTLINECOLOUR= 10*1          ,
+ IEXACTLINECOLOUR=2          , 9*1          ,
  IEXACTLINESTYLE=1          ,2          ,3          ,4          ,5          ,
  0          ,1          ,2          ,3          ,4          ,
  IAPPLYTRANSEXACTFILE=T,
@@ -238,8 +238,8 @@
  XPRIM= 3*0.00000000      ,
  XSEC=  1.00000000    , 2*0.00000000      ,
  NFILES=1          ,
- GAMMA_EXACT=  1.66666663    ,
- USE_GAMMA_EXACT=F,
+ GAMMA_EXACT=  1.39999998    ,
+ USE_GAMMA_EXACT=T,
  HONR=  5.00000007E-02,
  RPLANET=  1.00000000    ,
  Q_INDEX= 0.250000000    ,
@@ -781,106 +781,104 @@
  XMAXCOLEND=  0.00000000    ,
  XSECPOS_NOMULTI_END=  0.00000000    ,
  /
-snap_00000
-snap_00001
-snap_00002
-snap_00003
-snap_00004
-snap_00005
-snap_00006
-snap_00007
-snap_00008
-snap_00009
-snap_00010
-snap_00011
-snap_00012
-snap_00013
-snap_00014
-snap_00015
-snap_00016
-snap_00017
-snap_00018
-snap_00019
-snap_00020
-snap_00021
-snap_00022
-snap_00023
-snap_00024
-snap_00025
-snap_00026
-snap_00027
-snap_00028
-snap_00029
-snap_00030
-snap_00031
-snap_00032
-snap_00033
-snap_00034
-snap_00035
-snap_00036
-snap_00037
-snap_00038
-snap_00039
-snap_00040
-snap_00041
-snap_00042
-snap_00043
-snap_00044
-snap_00045
-snap_00046
-snap_00047
-snap_00048
-snap_00049
-snap_00050
-snap_00051
-snap_00052
-snap_00053
-snap_00054
-snap_00055
-snap_00056
-snap_00057
-snap_00058
-snap_00059
-snap_00060
-snap_00061
-snap_00062
-snap_00063
-snap_00064
-snap_00065
-snap_00066
-snap_00067
-snap_00068
-snap_00069
-snap_00070
-snap_00071
-snap_00072
-snap_00073
-snap_00074
-snap_00075
-snap_00076
-snap_00077
-snap_00078
-snap_00079
-snap_00080
-snap_00081
-snap_00082
-snap_00083
-snap_00084
-snap_00085
-snap_00086
-snap_00087
-snap_00088
-snap_00089
-snap_00090
-snap_00091
-snap_00092
-snap_00093
-snap_00094
-snap_00095
-snap_00096
-snap_00097
-snap_00098
-snap_00099
-snap_00100
-splash.defaults
-splash.limits
+output/snap_00000
+output/snap_00001
+output/snap_00002
+output/snap_00003
+output/snap_00004
+output/snap_00005
+output/snap_00006
+output/snap_00007
+output/snap_00008
+output/snap_00009
+output/snap_00010
+output/snap_00011
+output/snap_00012
+output/snap_00013
+output/snap_00014
+output/snap_00015
+output/snap_00016
+output/snap_00017
+output/snap_00018
+output/snap_00019
+output/snap_00020
+output/snap_00021
+output/snap_00022
+output/snap_00023
+output/snap_00024
+output/snap_00025
+output/snap_00026
+output/snap_00027
+output/snap_00028
+output/snap_00029
+output/snap_00030
+output/snap_00031
+output/snap_00032
+output/snap_00033
+output/snap_00034
+output/snap_00035
+output/snap_00036
+output/snap_00037
+output/snap_00038
+output/snap_00039
+output/snap_00040
+output/snap_00041
+output/snap_00042
+output/snap_00043
+output/snap_00044
+output/snap_00045
+output/snap_00046
+output/snap_00047
+output/snap_00048
+output/snap_00049
+output/snap_00050
+output/snap_00051
+output/snap_00052
+output/snap_00053
+output/snap_00054
+output/snap_00055
+output/snap_00056
+output/snap_00057
+output/snap_00058
+output/snap_00059
+output/snap_00060
+output/snap_00061
+output/snap_00062
+output/snap_00063
+output/snap_00064
+output/snap_00065
+output/snap_00066
+output/snap_00067
+output/snap_00068
+output/snap_00069
+output/snap_00070
+output/snap_00071
+output/snap_00072
+output/snap_00073
+output/snap_00074
+output/snap_00075
+output/snap_00076
+output/snap_00077
+output/snap_00078
+output/snap_00079
+output/snap_00080
+output/snap_00081
+output/snap_00082
+output/snap_00083
+output/snap_00084
+output/snap_00085
+output/snap_00086
+output/snap_00087
+output/snap_00088
+output/snap_00089
+output/snap_00090
+output/snap_00091
+output/snap_00092
+output/snap_00093
+output/snap_00094
+output/snap_00095
+output/snap_00096
+output/snap_00097
+output/snap_00098
+output/snap_00099
+output/snap_00100

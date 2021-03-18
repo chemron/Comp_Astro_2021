@@ -7,7 +7,7 @@ contains
         integer :: lu = 1
 
         open(lu , file='energy.out', status='replace', action='write')
-        write(lu,*) '# t, ke'
+        write(lu,*) '# Time, KE'
         close(lu)
 
     end subroutine initialise_ke_output
@@ -35,7 +35,7 @@ contains
         write(filename,"(a,i5.5)") 'output/snap_', ifile
         print "(a,f8.3)", ' writing '//trim(filename)// ' t =',t
         open(lu , file=filename, status='replace', action='write')
-        write(lu,*) '# x, v, a, m, h, rho, u, P, c, ke, dudt'
+        write(lu,*) '# x, v, a, m, h, rho, u, P, c, KE, dudt'
         write(lu,*) t
         do i=1, n
             write(lu,*) x(i), v(i), a(i), m(i), h(i), rho(i), u(i), P(i), c(i), ke(i), dudt(i)
