@@ -34,7 +34,7 @@ program sod
 
     ! evolve for 0.1 seconds
     t_start = 0.0
-    t_end = 10
+    t_end = 0.2
     dtout = 0.002
 
     dt = 0.2 * minval(h(1:n)/c(1:n))
