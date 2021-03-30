@@ -11,9 +11,11 @@ program main
     ! eccentricity
     ec = 0.7
 
-    dt = 0.01
+    ! dt = 0.01
+    dt = 0.05
+    ! dt = 0.1
     ! 5000 timesteps, 1000 prints
-    dt_out = dt * 5.0
+    dt_out = dt
     t_end = 5000.0 * dt
     t = 0.0
 
@@ -33,16 +35,16 @@ program main
     do while (t <= t_end)
 
         ! single leapfrog step
-        ! call leapfrog(x, v, dt)
+        call leapfrog(x, v, dt)
         ! or, runge kutta:
-        call rk4(x, v, dt)
+        ! call rk4(x, v, dt)
 
         t = t + dt
         
         ! print output
         if (t >= t_print) then
             call get_conserved_quantities(x, v, L, e)
-            call print_single_output(t, x, v, i_file)
+            ! call print_single_output(t, x, v, i_file)
             call print_output(t, x, v, e, L)
             i_file = i_file + 1
             t_print = i_file * dt_out
