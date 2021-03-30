@@ -71,7 +71,9 @@ contains
         k14 = dt * f1(x2 + k23)
         k24 = dt * f2(x1 + k13)
 
+        ! update position
         x1 = x1 + (1.0/6.0) * (k11 + 2*k12 + 2*k13 + k14) 
+        ! update velocity
         x2 = x2 + (1.0/6.0) * (k21 + 2*k22 + 2*k23 + k24)
 
     end subroutine rk4
