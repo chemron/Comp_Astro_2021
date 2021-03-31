@@ -23,16 +23,16 @@
 
 \section*{Part 1}
 
-While rk4 gives a good approximation of the ODE, it has no built-in way of
+While the fourth order Runge-Kutta method gives a good approximation of the ODE, it has no built-in way of
 conserving necessary quantities such as angular momentum or energy. This results
 in orbits such as the one in Figure \ref{fig:rk.1}, where the particle
 gets closer and closer to the mass at the origin, speeding up as it goes, until
 it's finally ejected altogether. This lack of conservation means that the errors
-can build up, and both the angular momentum and total energy of the system
-decrease over time, causing the orbit to decay (see Figures \ref{fig:rke}
+can build up, with both the angular momentum and total energy of the system
+decreasing over time, causing the orbit to decay (see Figures \ref{fig:rke}
 and \ref{fig:rkL}). On the other hand, while the leapfrog scheme is only second
-order, it is able to conserve angular momentum, and the error in the total
-energy is symmetric, and does not increase over time, as can be seen
+order, it is able to conserve angular momentum and the error in the total
+energy is symmetric and does not increase over time, as can be seen
 in Figures \ref{fig:lfL} and \ref{fig:lfe}. As a result, the orbit does not
 decay over time, however does rotate if the timestep is too large, as can be
 seen in Figures \ref{fig:lf.05} and \ref{fig:lf.1}.
@@ -128,7 +128,7 @@ are present in every plot. The speed of these waves is given by:
     \intertext{for the fast wave.}
 \end{align}
 
-The Alfv\'en waves are not compressive, but can be see in the plots of the
+The Alfv\'en waves are not compressive, but can be seen in the plots of the
 magnetic field and, as well as the velocity in the x and y directions (see
 Figure~\ref{fig:2a}). The speed of the Alfv\'en waves can be found from the
 dispersion relation as follows:
@@ -162,8 +162,8 @@ The initial Alfv\'en speed is given by:
     \rho_0 &= 1 \, ,
     \intertext{giving:}
     v_{A} &\approx 1.4 \, .
-    \intertext{Similarly, since we have $\gamma = 1.4$ and $P_0=1$ (see Figure \ref{fig:2b}), we find:}
-    c_s &= \sqrt{\frac{\gamma P_0}{\rho_0}}
+    \intertext{Similarly, since $\gamma = 1.4$ and $P_0=1$ (see Figure \ref{fig:2b}), we find:}
+    c_s &= \sqrt{\frac{\gamma P_0}{\rho_0}} \\
     &\approx 1.18
     \intertext{For waves traveling in the x direction ($\cos \theta = 1$), Equation \ref{vwavefs} reduces to}
     v_{wave} &= c_s
@@ -171,17 +171,25 @@ The initial Alfv\'en speed is given by:
     v_{wave} &= v_A
     \intertext{for fast waves. In the case of Alfv\'en waves, Equation \ref{vwavea} reduces to}
     v_{wave} &= v_A \, .
-    \intertext{Similarly, for waves travelling in the y direction (\cos \theta = 0)}
 \end{align} 
-The fast waves travel in both the x and y direction, and are slightly faster in
-the y direction. These are compressive waves, and are visible in all
-the plots.
-The slow waves travel mainly in the x direction (they do not travel in the y direction), and are also visible in all plots
-as they are also compressive.
-The Alfv\'en waves mainly travel in the x direction (the direction of the magnetic
-field), and are visible only in the plot showing magnetic energy as they are not
-compressive, and so do not show up in either pressure or density.
-These are labeled in Figure~\ref{fig:2b}.
+Similarly, for waves travelling in the y direction ($\cos \theta = 0$), we get
+velocities of $v_{wave} = 0$ for slow and Alfv\'en waves, and $v_{wave} =
+\sqrt{c_s^2 + v_A^2} \approx 1.84$ for fast waves. Using the approximation:
+\begin{align}
+    x &= x_0 + v_{wave} t \, ,
+\end{align}
+we find that at $t=0.15$, the slow, fast and Alfv\'en waves reach
+distances of $x=0.28, 0.31, 0.31$ and $y = 0.1, 0.38, 0.1$ respectively. \\
+
+We note that the fast waves travel in both the x and y direction, and are
+slightly faster in the y direction. These are compressive waves, and should be
+visible in all the plots. Meanwhile, the slow waves travel mainly in the x
+direction (they do not travel in the y direction), and should also be visible in
+all plots as they are also compressive. The Alfv\'en waves mainly travel in the
+x direction (the direction of the magnetic field), and should be visible in the
+plot of the magnetic energy. Importantly, these waves are not compressive, and
+so should not show up in either the pressure or density plots. We therfore label
+the shockfronts as shown in Figure~\ref{fig:2b}.
 
 \begin{figure}[h!]
     \centering
@@ -212,7 +220,7 @@ the two fluid method.
     \end{figure}
     
 \subsection*{b)}
-See end of document
+See end of document.
 
 \subsection*{c)}
 The stopping time is given by
@@ -232,8 +240,8 @@ stopping time), the dispersion relation reduces to
 
 In either case, there is no (or negligible) dampening term, and so the wave
 remains undamped, as can be seen in Figures \ref{fig:one_fluid} and
-\ref{fig:two_fluid} for both large and small $K$. The only case with dampening
-is when $t_s \omega \sim 1 $, i.e. the stopping time is similar to the
+\ref{fig:two_fluid} for both large and small $K$. The only case where dampening
+comes into effect is when $t_s \omega \sim 1 $, i.e. the stopping time is similar to the
 timescales involved. This can be seen for the $K = 1.0$ case these figures.
 
 
@@ -243,11 +251,11 @@ The two fluid method gives accurate results for small $K$ (i.e. large stopping
 times), which occurs when the two fluids are weakly coupled. Assuming Epstein
 drag, this corresponds to large grains. As we are dealing with only (small)
 linear perturbations, the one fluid method is able to approximate the analytic
-solution for all values of $K$ shown in figure \ref{fig:one_fluid}. However for
-small $K$ this can break down for non linear perturbations as it is unable to
-handle double valued solutions (i.e. dust particles passing through each other)
-like the two fluid method. Typically the one fluid method gives the most
-accurate results for large K (small stopping times), when the two fluids are
-strongly coupled. This corresponds to small grains.
+solution for all values of $K$ shown in figure \ref{fig:one_fluid}. However
+unlike the two fluid method, for small $K$ this can break down for non linear
+perturbations as it is unable to handle double valued solutions (i.e. dust
+particles passing through each other). Typically the one fluid method gives the
+most accurate results for large K (small stopping times), when the two fluids
+are strongly coupled. This corresponds to small grains.
 
 \end{document}
